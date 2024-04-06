@@ -10,7 +10,7 @@ import "github.com/tenox7/tkvs"
 acm := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
 		HostPolicy: autocert.HostWhitelist("www.mysite.com"),
-		Cache: tkvs.NewJsonCache("/var/cache/acme-store.json", autocert.ErrCacheMiss),
+		Cache:      tkvs.NewJsonCache("/var/cache/acme-store.json", autocert.ErrCacheMiss),
 }
 
 syscall.Chroot(dir)
