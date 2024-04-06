@@ -56,7 +56,7 @@ func (j *KVS) writeJson(kv *KeyVal) error {
 }
 
 func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
-	log.Printf("Get: %q", key)
+	log.Printf("get %q", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return nil, err
@@ -69,7 +69,7 @@ func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
 }
 
 func (j *KVS) Put(_ context.Context, key string, data []byte) error {
-	log.Printf("PUT: %q", key)
+	log.Printf("put %q", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (j *KVS) Put(_ context.Context, key string, data []byte) error {
 }
 
 func (j *KVS) Delete(_ context.Context, key string) error {
-	log.Printf("DEL: %q", key)
+	log.Printf("del %q", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return err
