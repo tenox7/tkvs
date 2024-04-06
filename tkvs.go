@@ -31,13 +31,13 @@ func (j *KVS) readJson() (KeyVal, error) {
 		return nil, err
 	}
 	if len(buf) == 0 {
-		log.Print("made new container")
+		log.Print("making new container")
 		return make(KeyVal), nil
 	}
 	c := Container{}
-	log.Printf("read data: %v", string(buf))
+	log.Printf("read data: %v", len(buf))
 	if err = json.Unmarshal(buf, &c); err != nil {
-		log.Printf("json.Unmarshall: %v", string(buf))
+		log.Printf("json.Unmarshall: %v", len(buf))
 		return nil, err
 	}
 	return c.KeyVal, nil
@@ -58,6 +58,7 @@ func (j *KVS) writeJson(kv *KeyVal) error {
 }
 
 func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
+	log.Printf("Get: %+v", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return nil, err
@@ -66,27 +67,26 @@ func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
 	if !ok {
 		return nil, j.misErr
 	}
-	log.Printf("get map: %+v", kv)
 	return val, nil
 }
 
 func (j *KVS) Put(_ context.Context, key string, data []byte) error {
+	log.Printf("PUT: %+v", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return err
 	}
 	kv[key] = data
-	log.Printf("put map: %+v", kv)
 	return j.writeJson(&kv)
 }
 
 func (j *KVS) Delete(_ context.Context, key string) error {
+	log.Printf("DEL: %v", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return err
 	}
 	delete(kv, key)
-	log.Printf("del map: %v", key)
 	return j.writeJson(&kv)
 }
 
