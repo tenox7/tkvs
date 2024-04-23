@@ -25,7 +25,7 @@ syscall.Chroot(dir)
 import "github.com/tenox7/tkvs"
 
 cache := tkvs.NewJsonCache("/var/cache/my-store", errors.New("key not found"))
-cache.Put(ctx, "my-key", []byte("my-value"))
-cache.Get(ctx, "my-key")
-cache.Delete(ctx, "my-key")
+cache.Put(ctx, "myKey", []byte("myValue"))
+cache.Get(ctx, "myKey")
+cache.Delete(ctx, "myKey")
 ```
