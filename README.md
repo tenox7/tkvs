@@ -5,7 +5,10 @@ Implementation of the [Cache Interface](https://pkg.go.dev/golang.org/x/crypto/a
 ## Usage with ACME
 
 ```go
-import "github.com/tenox7/tkvs"
+import (
+	"github.com/tenox7/tkvs"
+	"golang.org/x/crypto/acme/autocert"
+)
 
 acm := autocert.Manager{
 		Prompt:     autocert.AcceptTOS,
