@@ -31,7 +31,6 @@ func (j *KVS) readJson() (KeyVal, error) {
 		return nil, err
 	}
 	if len(buf) == 0 {
-		log.Print("making new container")
 		return make(KeyVal), nil
 	}
 	c := Container{}
@@ -56,7 +55,6 @@ func (j *KVS) writeJson(kv *KeyVal) error {
 }
 
 func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
-	log.Printf("get %q", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return nil, err
@@ -69,7 +67,6 @@ func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
 }
 
 func (j *KVS) Put(_ context.Context, key string, data []byte) error {
-	log.Printf("put %q", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return err
@@ -79,7 +76,6 @@ func (j *KVS) Put(_ context.Context, key string, data []byte) error {
 }
 
 func (j *KVS) Delete(_ context.Context, key string) error {
-	log.Printf("del %q", key)
 	kv, err := j.readJson()
 	if err != nil {
 		return err
