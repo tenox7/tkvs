@@ -88,7 +88,7 @@ func (j *KVS) Delete(_ context.Context, key string) error {
 	return j.writeJson(&kv)
 }
 
-func NewJsonCache(path string, misErr error) *KVS {
+func New(path string, misErr error) *KVS {
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
 		log.Fatal(err)
