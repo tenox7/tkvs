@@ -87,6 +87,18 @@ func (j *KVS) Delete(_ context.Context, key string) error {
 	return j.writeJson(&kv)
 }
 
+func (j *KVS) Keys() ([]string, error) {
+	kv, err := j.readJson()
+	if err != nil {
+		return nil, err
+	}
+	s := []string{}
+	for n := range kv {
+		s = append(s, n)
+	}
+	return s, nil
+}
+
 func New(path string, misErr error) *KVS {
 	l, err := fslock.Lock(path)
 	if err != nil {
