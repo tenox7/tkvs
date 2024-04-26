@@ -8,11 +8,14 @@ import (
 	"log"
 	"os"
 	"sync"
+
+	"github.com/danjacques/gofslock/fslock"
 )
 
 type KVS struct {
 	file   *os.File
 	misErr error
+	lock   *fslock.Handle
 	sync.Mutex
 }
 
@@ -85,9 +88,13 @@ func (j *KVS) Delete(_ context.Context, key string) error {
 }
 
 func New(path string, misErr error) *KVS {
+	l, err := fslock.Lock(path)
+	if err != nil {
+		log.Fatal(err)
+	}
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &KVS{file: f, misErr: misErr}
+	return &KVS{file: f, misErr: misErr, lock: &l}
 }
