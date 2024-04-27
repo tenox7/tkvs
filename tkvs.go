@@ -50,7 +50,7 @@ func (j *TKVS) writeJson() error {
 	j.Lock()
 	defer j.Unlock()
 	c := Container{KeyVal: j.kvs}
-	out, err := json.Marshal(c)
+	out, err := json.Marshal(&c)
 	if err != nil {
 		return err
 	}
