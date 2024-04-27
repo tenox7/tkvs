@@ -2,8 +2,6 @@
 
 Implementation of the [Cache Interface](https://pkg.go.dev/golang.org/x/crypto/acme/autocert#Cache) for [Go acme/autocert](https://pkg.go.dev/golang.org/x/crypto/acme/autocert) in `chroot` environments. However it can be used for anything. The key/value store is realized in a single Json file opened on startup, thus available even if caller invokes `chroot` after.
 
-TKVS is not mean for high performance or concurrent applications.
-
 ## Usage with ACME
 
 ```go

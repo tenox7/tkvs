@@ -12,10 +12,11 @@ import (
 	"github.com/danjacques/gofslock/fslock"
 )
 
-type KVS struct {
+type TKVS struct {
 	file   *os.File
 	misErr error
 	lock   *fslock.Handle
+	kvs    KeyVal
 	sync.Mutex
 }
 
@@ -25,28 +26,30 @@ type Container struct {
 	KeyVal `json:"keyval"`
 }
 
-func (j *KVS) readJson() (KeyVal, error) {
+func (j *TKVS) readJson() error {
 	j.Lock()
 	defer j.Unlock()
 	j.file.Seek(0, 0)
 	buf, err := io.ReadAll(j.file)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	if len(buf) == 0 {
-		return make(KeyVal), nil
+		j.kvs = make(KeyVal)
+		return nil
 	}
 	c := Container{}
 	if err = json.Unmarshal(buf, &c); err != nil {
-		return nil, err
+		return err
 	}
-	return c.KeyVal, nil
+	j.kvs = c.KeyVal
+	return nil
 }
 
-func (j *KVS) writeJson(kv *KeyVal) error {
+func (j *TKVS) writeJson() error {
 	j.Lock()
 	defer j.Unlock()
-	c := Container{KeyVal: *kv}
+	c := Container{KeyVal: j.kvs}
 	out, err := json.Marshal(c)
 	if err != nil {
 		return err
@@ -57,49 +60,33 @@ func (j *KVS) writeJson(kv *KeyVal) error {
 	return err
 }
 
-func (j *KVS) Get(_ context.Context, key string) ([]byte, error) {
-	kv, err := j.readJson()
-	if err != nil {
-		return nil, err
-	}
-	val, ok := kv[key]
+func (j *TKVS) Get(_ context.Context, key string) ([]byte, error) {
+	val, ok := j.kvs[key]
 	if !ok {
 		return nil, j.misErr
 	}
 	return val, nil
 }
 
-func (j *KVS) Put(_ context.Context, key string, data []byte) error {
-	kv, err := j.readJson()
-	if err != nil {
-		return err
-	}
-	kv[key] = data
-	return j.writeJson(&kv)
+func (j *TKVS) Put(_ context.Context, key string, data []byte) error {
+	j.kvs[key] = data
+	return j.writeJson()
 }
 
-func (j *KVS) Delete(_ context.Context, key string) error {
-	kv, err := j.readJson()
-	if err != nil {
-		return err
-	}
-	delete(kv, key)
-	return j.writeJson(&kv)
+func (j *TKVS) Delete(_ context.Context, key string) error {
+	delete(j.kvs, key)
+	return j.writeJson()
 }
 
-func (j *KVS) Keys() ([]string, error) {
-	kv, err := j.readJson()
-	if err != nil {
-		return nil, err
-	}
+func (j *TKVS) Keys() ([]string, error) {
 	s := []string{}
-	for n := range kv {
+	for n := range j.kvs {
 		s = append(s, n)
 	}
 	return s, nil
 }
 
-func New(path string, misErr error) *KVS {
+func New(path string, misErr error) *TKVS {
 	l, err := fslock.Lock(path)
 	if err != nil {
 		log.Fatal(err)
@@ -108,5 +95,10 @@ func New(path string, misErr error) *KVS {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &KVS{file: f, misErr: misErr, lock: &l}
+	k := &TKVS{file: f, misErr: misErr, lock: &l}
+	err = k.readJson()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return k
 }

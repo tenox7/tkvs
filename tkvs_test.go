@@ -9,26 +9,45 @@ import (
 )
 
 func TestAll(t *testing.T) {
-	tk := tkvs.New("test.json", errors.New("key not found"))
-	err := tk.Put(nil, "foo", []byte("bar"))
+	myErr := errors.New("key not found")
+	tk := tkvs.New("test.json", myErr)
+
+	val, err := tk.Get(nil, "foo")
+	if err != nil && err != myErr {
+		log.Fatal(err)
+	}
+	log.Printf("val=%q", string(val))
+
+	err = tk.Put(nil, "foo", []byte("bar"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	val, err := tk.Get(nil, "foo")
+	val, err = tk.Get(nil, "foo")
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print("val=", string(val))
+	log.Printf("val=%q", string(val))
+
+	err = tk.Put(nil, "baz", []byte("bug"))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	keys, err := tk.Keys()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Print("keys=", keys)
+	log.Printf("keys=%v", keys)
 
-	err = tk.Delete(nil, "foo")
+	err = tk.Delete(nil, "fuq")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	keys, err = tk.Keys()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("keys=%v", keys)
 }
