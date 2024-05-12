@@ -89,16 +89,16 @@ func (j *TKVS) Keys() ([]string, error) {
 func New(path string, misErr error) *TKVS {
 	l, err := fslock.Lock(path)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("unable to lock %q: %v", path, err)
 	}
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0600)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("unable to open %q: %v", path, err)
 	}
 	k := &TKVS{file: f, misErr: misErr, lock: &l}
 	err = k.readJson()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("unable to read %q: %v", path, err)
 	}
 	return k
 }
