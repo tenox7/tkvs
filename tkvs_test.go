@@ -34,10 +34,7 @@ func TestAll(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	keys, err := tk.Keys()
-	if err != nil {
-		log.Fatal(err)
-	}
+	keys := tk.Keys()
 	log.Printf("keys=%v", keys)
 
 	err = tk.Delete(nil, "fuq")
@@ -45,9 +42,6 @@ func TestAll(t *testing.T) {
 		log.Fatal(err)
 	}
 
-	keys, err = tk.Keys()
-	if err != nil {
-		log.Fatal(err)
-	}
+	keys = tk.Keys()
 	log.Printf("keys=%v", keys)
 }

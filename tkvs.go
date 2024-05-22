@@ -78,12 +78,12 @@ func (j *TKVS) Delete(_ context.Context, key string) error {
 	return j.writeJson()
 }
 
-func (j *TKVS) Keys() ([]string, error) {
+func (j *TKVS) Keys() []string {
 	s := []string{}
 	for n := range j.kvs {
 		s = append(s, n)
 	}
-	return s, nil
+	return s
 }
 
 func New(path string, misErr error) *TKVS {
