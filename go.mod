@@ -1,4 +1,4 @@
-module github.com/tenox7/tkvs
+module github.com/tenox7/tkvs/v0.7
 
 go 1.21.5
 
