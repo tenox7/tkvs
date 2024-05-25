@@ -7,18 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
-	"sync"
-
-	"github.com/danjacques/gofslock/fslock"
 )
-
-type TKVS struct {
-	file   *os.File
-	misErr error
-	lock   *fslock.Handle
-	kvs    KeyVal
-	sync.Mutex
-}
 
 type KeyVal map[string][]byte
 
@@ -87,7 +76,8 @@ func (j *TKVS) Keys() []string {
 }
 
 func New(path string, misErr error) *TKVS {
-	l, err := fslock.Lock(path)
+	k := &TKVS{misErr: misErr}
+	err := k.fsLock(path)
 	if err != nil {
 		log.Fatalf("unable to lock %q: %v", path, err)
 	}
@@ -95,7 +85,7 @@ func New(path string, misErr error) *TKVS {
 	if err != nil {
 		log.Fatalf("unable to open %q: %v", path, err)
 	}
-	k := &TKVS{file: f, misErr: misErr, lock: &l}
+	k.file = f
 	err = k.readJson()
 	if err != nil {
 		log.Fatalf("unable to read %q: %v", path, err)
